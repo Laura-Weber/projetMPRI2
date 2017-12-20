@@ -22,33 +22,53 @@ function [recall, precision] = tests()
     img_dbq = cell(1);
     label_dbq = cell(1);
     fd_dbq = cell(1);
+
     figure();
-    for im = 1:numel(img_dbq_list);       
+
+    for im = 1:1 %numel(img_dbq_list);       
         img_dbq{im} = logical(imread(img_dbq_list{im}));   
         label_dbq{im} = get_label(img_dbq_list{im});
-        
+        hold on;
+        clf;imshow(img_dbq{im});
         [row, col] = find(img_dbq{im});
         moyx = round(mean(col));
         moyy = round(mean(row));
-        disp(moyx); disp(moyy);
+        %disp(moyx); disp(moyy);
         
         tmpx = moyx;
         tmpy = moyy;
         
         img = img_dbq{im};
 
-        for delta=0: pi/6: 2*pi;
-            while ((img(tmpy,tmpx) == 1) & (tmpx < size(img,2)) & (tmpy < size(img,1)));
-                tmpx = tmpx + cos(delta);
-                tmpy = tmpy + sin(delta);
-            end
-            disp(delta);
-            disp(tmpx);
-            disp(tmpy);
-        end
-          
+        %teta = linspace(0, 2*pi, 400);
         
-        clf;imshow(img_dbq{im});
+        for i=1:180;
+            decalx = cos(i*2*pi)/180;
+            decaly = sin(i*2*pi)/180;
+            while ((img(tmpx,tmpy) == 1) || (tmpx < size(img,2)) || (tmpy < size(img,1)));
+                tmpx = tmpx + round(decalx)
+                tmpy = tmpy + round(decaly)
+                hold on;
+                plot(round(tmpx), round(tmpy), 'r+');
+            end
+            hold on;
+            plot(round(tmpy), round(tmpx), 'g+');
+
+        end
+        
+        %for i=1:400;
+        %    while ((img(tmpy,tmpx) == 1) && (tmpx < size(img,2)) && (tmpy < size(img,1)));
+        %        tmpx = tmpx + cos(teta(i));
+        %        tmpy = tmpy + sin(teta(i));
+        %        hold on;
+        %        plot(tmpx, tmpy, 'r+');
+        %    end
+            %plot(tmpy, tmpx, '+g');
+
+        %end
+        
+        %clf;imshow(img_dbq{im});
+
         disp(label_dbq{im}); 
         drawnow();
     end
