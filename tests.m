@@ -12,8 +12,9 @@ function [recall, precision] = tests()
     %Paramèrtres de l'application
     %nbteta : 1er param, c'est le delta des points de contours
     nbteta =10;
-    %nbvaleur : 2eme param, nb de valeur pour le lissage
-    nbvaleur = 10;
+    %nbvaleur : 2eme param, nb de valeur pour le lissage, < nbteta par
+    %construction
+    nbvaleur = 5;
 
     for im = 1:1 %numel(img_dbq_list);       
         img_dbq{im} = logical(imread(img_dbq_list{im}));   
@@ -46,12 +47,14 @@ function [recall, precision] = tests()
         end
         
         %Etape 3-4 : On calcule la TF et on normalise
-        TF = fft(pointy)/fft(pointy(1));
-        figure();plot(real(TF));
-        %figure();plot(pointy);
-        
+        TF = real(fft(pointy)/fft(pointy(1)));
+
         %Etape 5 : On fait le lissage
+        TF = TF(1,1:nbvaleur);
+        figure();plot(TF);
         
+        %Ici, TF est donc devenu le descripteur de l'image.
+
         %disp(label_dbq{im}); 
         drawnow();
     end
