@@ -9,21 +9,28 @@ function [recall, precision] = tests()
     img_dbq = cell(1);
     label_dbq = cell(1);
     
+    %Paramèrtres de l'application
+    %nbteta : 1er param, c'est le delta des points de contours
     nbteta =10;
+    %nbvaleur : 2eme param, nb de valeur pour le lissage
+    nbvaleur = 10;
 
     for im = 1:1 %numel(img_dbq_list);       
         img_dbq{im} = logical(imread(img_dbq_list{im}));   
         label_dbq{im} = get_label(img_dbq_list{im});
+        
+        %Etape 1 : On calcule le barycentre
         [row, col] = find(img_dbq{im});
         baryx = round(mean(col));
         baryy = round(mean(row));
         
         img = img_dbq{im};
-        figure, imshow(img); hold on;
+        %figure, imshow(img); hold on;
         
         %On stocke nbteta valeurs de teta entre 0 et 2pi avec le même écart 
         teta = linspace(0, 2*pi, nbteta);
         
+        %Etape 2 : On calcule les points de contours
         for i=1:nbteta
             decalx = round(cos(teta(1,i)*2*pi));
             decaly = round(sin(teta(1,i)*2*pi));
@@ -35,27 +42,17 @@ function [recall, precision] = tests()
             end
             %On récupère la distance entre le barycentre et le point
             pointy(1,i) = pdist([baryx, baryy; tmpx, tmpy],'euclidean');
-            plot(tmpx, tmpy, "g+");
+            %plot(tmpx, tmpy, "g+");
         end
         
-        TF = fft(pointy);
-        figure();plot(TF);
-        figure();plot(pointy);
+        %Etape 3-4 : On calcule la TF et on normalise
+        TF = fft(pointy)/fft(pointy(1));
+        figure();plot(real(TF));
+        %figure();plot(pointy);
         
-        %for i=1:400;
-        %    while ((img(tmpy,tmpx) == 1) && (tmpx < size(img,2)) && (tmpy < size(img,1)));
-        %        tmpx = tmpx + cos(teta(i));
-        %        tmpy = tmpy + sin(teta(i));
-        %        hold on;
-        %        plot(tmpx, tmpy, 'r+');
-        %    end
-            %plot(tmpy, tmpx, '+g');
-
-        %end
+        %Etape 5 : On fait le lissage
         
-        %clf;imshow(img_dbq{im});
-
-        disp(label_dbq{im}); 
+        %disp(label_dbq{im}); 
         drawnow();
     end
     
