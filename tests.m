@@ -9,7 +9,7 @@ function [recall, precision] = tests()
     img_dbq = cell(1);
     label_dbq = cell(1);
     
-    nbteta = 30;
+    nbteta =10;
 
     for im = 1:1 %numel(img_dbq_list);       
         img_dbq{im} = logical(imread(img_dbq_list{im}));   
@@ -21,6 +21,7 @@ function [recall, precision] = tests()
         img = img_dbq{im};
         figure, imshow(img); hold on;
         
+        %On stocke nbteta valeurs de teta entre 0 et 2pi avec le même écart 
         teta = linspace(0, 2*pi, nbteta);
         
         for i=1:nbteta
@@ -32,9 +33,15 @@ function [recall, precision] = tests()
                 tmpx = tmpx + decalx;  
                 tmpy = tmpy + decaly;
             end
-            plot(round(tmpx), round(tmpy), "g+");
+            %On récupère la distance entre le barycentre et le point
+            pointy(1,i) = pdist([baryx, baryy; tmpx, tmpy],'euclidean');
+            plot(tmpx, tmpy, "g+");
         end
-                
+        
+        TF = fft(pointy);
+        figure();plot(TF);
+        figure();plot(pointy);
+        
         %for i=1:400;
         %    while ((img(tmpy,tmpx) == 1) && (tmpx < size(img,2)) && (tmpy < size(img,1)));
         %        tmpx = tmpx + cos(teta(i));
